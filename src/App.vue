@@ -1,5 +1,5 @@
 <template>
-  <div class="top-menu">
+  <!-- <div class="top-menu">
     <div class="flex items-center justify-center w-10 h-full mt-auto cursor-pointer" @click="console.log('фадеев заебал')" >
       <img src="/src/assets/icons/bars-solid.svg" alt="Toogle filter" class="w-5 h-5 xl:w-6 xl:h-6 filter-icon" />
     </div>
@@ -124,9 +124,9 @@
                   <td>Temperature</td>
                   <td>{{ Number(devices[device].environmentMetrics.data.environmentMetrics.temperature).toFixed(1) }} ℃</td>
                 </tr>
-                <!-- <tr v-if="devices[device]?.mqtt">
+                 <tr v-if="devices[device]?.mqtt">
                   <td><div class="font-bold">MQTT: </div></td> <td><div class="font-bold">Online</div></td>
-                </tr> -->
+                </tr>
                 <tr v-if="devices[device]?.mqtt">
                   <td>Server: </td> <td>{{devices[device]?.server}}</td>
                 </tr>
@@ -138,9 +138,9 @@
           </div>
         </div>
       </div>
-    </div>
+    </div> -->
     <div id="map" class="w-full h-full"></div>
-  </div>
+  <!-- </div> -->
 </template>
 
 <script setup>
@@ -320,9 +320,9 @@ onMounted(async () => {
     map.controls.remove('fullscreenControl') // костыль против двух кнопок
     map.controls.remove('searchControl') // удаляем кнопку перехода в полноэкранный режим
 
-    var fullscreenControl = new ymaps.control.FullscreenControl();
-    map.controls.add(fullscreenControl)
-    fullscreenControl.enterFullscreen() // переходив в enterFullscreen
+    // var fullscreenControl = new ymaps.control.FullscreenControl();
+    // map.controls.add(fullscreenControl)
+    // fullscreenControl.enterFullscreen() // переходив в enterFullscreen
 
     let button = new ymaps.control.Button("INFO");
     map.controls.add(button, { float: 'left', floatIndex: 0 });
