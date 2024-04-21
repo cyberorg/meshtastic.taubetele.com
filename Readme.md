@@ -48,22 +48,22 @@ export const useServer = () => {
 ```
 
 
-
-
 ### Task list
 
 - [x] Show node's on the map
 - [x] Diveces data list
     - [x] Search
-    - [ ] Button? new page? readeble table?
+    - [ ] Button > modal window > readeble table
 - [x] Telegram bot forwards public messages
+    - [ ] add some reciver
 - [x] Show MQTT connected node's
-- [ ] Show points in the window only, do not draw unnecessary
-- [ ] Background update by timer
+- [x] Show points in the window only, do not draw unnecessary
+    - [ ] redraw timer
+- [x] Background update by timer 20s
 - [ ] Telemetry charts
 	- [x] collect telemetry data
 	- [x] returns data on request
 - [ ] GPS track by node
 	- [x] collect location data
 	- [x] returns data on request
-- [ ] Show real connections between nodes
+- [ ] Show real connections between nodes (based on user pings)
