@@ -42,9 +42,9 @@
 
   .modal {
     position: absolute;
-    max-height: 60vh;
-    width: 60%;
-    max-width: 500px;
+    max-height: 75vh;
+    width: 75%;
+    max-width: 75%;
     background-color: rgb(255, 255, 255);
     top: 50%;
     left: 50%;

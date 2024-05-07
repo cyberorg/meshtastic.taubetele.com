@@ -291,7 +291,7 @@ onMounted(async () => {
       emit("infoOpen");
     });
 
-    let tabletButton = new ymaps.control.Button("СПИСОК");
+    let tabletButton = new ymaps.control.Button("NODES");
     map.controls.add(tabletButton, {
       selectOnClick: false,
       float: "left",
