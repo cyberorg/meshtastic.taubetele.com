@@ -1,51 +1,12 @@
 # WHATIS
 
+```bash
 https://meshtastic.taubetele.com/
+```
 
 A nearly live map of Meshtastic nodes seen by Meshtastic MQTT servers.
 
 Before start it, run redis docker container + back (api.meshtastic.taubetele.com) + mqtt server (optional).
-
-# Config it
-
-```bash
-cat server.js
-```
-
-```js
-export const useServer = () => {
-  // const theOnlyOne = 'https://api.meshtasticback.taubetele.com'
-  const theOnlyOne = 'http://localhost'
-  return {
-    theOnlyOne
-  }
-}
-```
-
-
-# WHATIS
-
-https://meshtastic.taubetele.com/
-
-
-Not a pet. Not a product-grade. Just a try to educate `@kkwestt` to read this `Readme.md` and notify `@zwoelf` if it's read.
-Before start it, run redis docker container.
-
-# Config it
-
-```bash
-cat server.js
-```
-
-```js
-export const useServer = () => {
-  // const theOnlyOne = 'https://api.meshtasticback.taubetele.com'
-  const theOnlyOne = 'http://localhost' // poka tak v deve
-  return {
-    theOnlyOne
-  }
-}
-```
 
 
 ### Task list
