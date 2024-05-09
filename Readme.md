@@ -28,7 +28,7 @@ Before start it, run redis docker container + back (api.meshtastic.taubetele.com
 - [ ] GPS track by node
 	- [x] collect location data
 	- [x] returns data on request
-- [ ] Show real connections between nodes (based on user pings)
+- [ ] Show real connections between nodes, layer with switch (based on user pings)
 - [ ] Switch to simplified data
 - [ ] Remember the last position of map in window
 - [ ] Dark themes
