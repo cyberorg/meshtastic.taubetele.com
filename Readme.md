@@ -69,5 +69,8 @@ export const useServer = () => {
 
 ### Contributors list
 
-- @kkwestt
-- 
+- [@kkwestt]
+- [@zwoelf]
+- Vadim Kudr
+- [@JulesSoulfly]
+- [@AnastasiiaRyabchikova]
