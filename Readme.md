@@ -1,7 +1,9 @@
 # WHATIS
 
 https://meshtastic.taubetele.com/
+
 A nearly live map of Meshtastic nodes seen by Meshtastic MQTT servers.
+
 Before start it, run redis docker container + back (api.meshtastic.taubetele.com) + mqtt server (optional).
 
 # Config it
