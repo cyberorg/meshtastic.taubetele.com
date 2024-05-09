@@ -9,7 +9,8 @@ A nearly live map of Meshtastic nodes seen by Meshtastic MQTT servers.
 Before start it, run redis docker container + back (api.meshtastic.taubetele.com) + mqtt server (optional).
 
 
-### Task list
+
+## Task list
 
 - [x] Show node's on the map
 - [x] Diveces data list
@@ -28,8 +29,11 @@ Before start it, run redis docker container + back (api.meshtastic.taubetele.com
 	- [x] collect location data
 	- [x] returns data on request
 - [ ] Show real connections between nodes (based on user pings)
+- [ ] Switch to simplified data
+- [ ] Remember the last position of map in window
+- [ ] Dark themes
 
-### Contributors list
+## Contributors list
 
 - @kkwestt
 - @zwoelf
