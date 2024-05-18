@@ -63,15 +63,108 @@
           <div class="cursor-pointer select-none" >
             <div class="text-xl flex gap-1.5 cursor-pointer" @click="devices[device].opened = !devices[device].opened">
               <span :class="(Math.round(Date.now() / 1000) - devices[device].timestamp) > 3600 ? 'text-neutral-500' : 'text-blue-600'">
-                <span v-if="devices[device]?.user?.data?.longName">{{ devices[device]?.user?.data?.longName }}</span>
+                <span v-if="devices[device]?.user?.data?.longName ||
+                            devices[device]?.position?.from ||
+                            devices[device]?.deviceMetrics?.from ||
+                            devices[device]?.environmentMetrics?.from ">{{  devices[device]?.user?.data?.longName ||
+                                                                            devices[device]?.position?.from ||
+                                                                            devices[device]?.deviceMetrics?.from ||
+                                                                            devices[device]?.environmentMetrics?.from  }}</span>
                 <span v-else>{{ device }}</span>
               </span>
           </div>
-            <div v-if="((Math.round(Date.now() / 1000) - devices[device].timestamp) > 3600)" @click="addToFilter(devices[device].user?.data?.longName)"> Last heard: {{new Date(devices[device].timestamp * 1000).toLocaleString()}} </div>
-            <!-- <div v-else>{{ timeAgo(new Date(devices[device].timestamp * 1000).getTime()) }}</div> -->
+            <div v-if="((Math.round(Date.now() / 1000) - devices[device].timestamp) > 3600)" @click="addToFilter(devices[device].user?.data?.longName)" class="text-neutral-500 text-s "> Last heard: {{new Date(devices[device].timestamp * 1000).toLocaleString()}} </div>
+            <div v-else>{{ timeAgo(new Date(devices[device].timestamp * 1000).getTime()) }}</div>
           </div>
           <div v-if="devices[device].opened">
-            <table>
+            &nbsp;
+            <ul>
+
+              <dl v-if="devices[device]?.user?.from || 
+                        devices[device]?.position?.from ||
+                        devices[device]?.deviceMetrics?.from ||
+                        devices[device]?.environmentMetrics?.from"><b>Node Info:</b> {{ timeAgo(new Date(Date.parse(devices[device]?.user?.rxTime)).getTime()) }}</dl>
+              <ul>
+              <li v-if="devices[device]?.user?.data?.shortName"> Short Name: <b> {{devices[device]?.user?.data?.shortName}}</b> </li>
+              <li v-if="devices[device]?.user?.data?.longName"> Long Name: <b> {{devices[device]?.user?.data?.longName}}</b> </li>
+              <li v-if="devices[device]?.user?.data?.id"> ID: <b> {{devices[device]?.user?.data?.id}}</b> </li>
+              <li v-if="devices[device]?.user?.from || 
+                        devices[device]?.position?.from ||
+                        devices[device]?.deviceMetrics?.from ||
+                        devices[device]?.environmentMetrics?.from "> ID From: <b> {{ devices[device]?.user?.from || 
+                                                                          devices[device]?.position?.from || 
+                                                                          devices[device]?.deviceMetrics?.from ||
+                                                                          devices[device]?.environmentMetrics?.from }}</b> </li>
+              <li v-if="devices[device]?.user?.data?.hwModel"> Hardware Model: <b> {{devices[device]?.user?.data?.hwModel}}</b> </li>
+              <li v-if="devices[device]?.user?.data?.role"> Role: <b> {{devices[device]?.user?.data?.role}}</b> </li>
+              <!-- <li v-if="devices[device]?.user?.data?.macaddr"> Mac Addr: <b> {{devices[device]?.user?.data?.macaddr}}</b> </li> -->
+              <li v-if="devices[device]?.user?.data?.isLicensed"> Is Licensed?: <b> {{devices[device]?.user?.data?.isLicensed}}</b> </li> 
+              </ul>
+
+              <dl v-if="devices[device]?.position?.from"><hr><b>Position</b> {{ timeAgo(new Date(devices[device]?.position?.data?.time * 1000).getTime()) }}</dl>
+              <ul v-if="devices[device]?.position?.from">
+                <li v-if="devices[device]?.position?.rxRssi"> rxRssi: <b> {{devices[device]?.position?.rxRssi}}</b> </li>
+                <li v-if="devices[device]?.position?.rxSnr"> rxSnr: <b> {{devices[device]?.position?.rxSnr}}</b> </li>
+                <li v-if="devices[device]?.position?.hopLimit"> Position Hop Limit: <b> {{devices[device]?.position?.hopLimit}}</b> </li>
+                <li v-if="devices[device]?.position?.data?.latitudeI"> Latitude: <b> {{devices[device]?.position?.data?.latitudeI/10000000}}</b> </li>
+                <li v-if="devices[device]?.position?.data?.longitudeI"> Longitude: <b> {{devices[device]?.position?.data?.longitudeI/10000000}}</b> </li>
+                <li v-if="devices[device]?.position?.data?.altitude"> Altitude: <b> {{devices[device]?.position?.data?.altitude}}</b> </li>
+                <li v-if="devices[device]?.position?.data?.satsInView"> Sats In View: <b> {{devices[device]?.position?.data?.satsInView}}</b> </li>
+                <li v-if="devices[device]?.position?.data?.seqNumber"> Seq Number: <b> {{devices[device]?.position?.data?.seqNumber}}</b> </li>
+                <li v-if="devices[device]?.position?.data?.groundSpeed"> Ground Speed: <b> {{devices[device]?.position?.data?.groundSpeed}}</b> </li>
+              </ul>
+            
+              <dl v-if="devices[device]?.deviceMetrics?.from"><hr><b>Device Metrics</b> {{ timeAgo(new Date(devices[device]?.deviceMetrics?.data?.time * 1000).getTime())}}</dl>
+              <ul v-if="devices[device]?.deviceMetrics?.from">
+                <li v-if="devices[device]?.deviceMetrics?.rxRssi"> rxRssi: <b> {{devices[device]?.deviceMetrics?.rxRssi}}</b> </li>
+                <li v-if="devices[device]?.deviceMetrics?.rxSnr"> rxSnr: <b> {{devices[device]?.deviceMetrics?.rxSnr}}</b> </li>
+                <li v-if="devices[device]?.deviceMetrics?.hopLimit"> Device Metrics Hop Limit: <b> {{devices[device]?.deviceMetrics?.hopLimit}}</b> </li>
+                <li v-if="devices[device]?.deviceMetrics?.data?.deviceMetrics?.batteryLevel"> Battery Level: <b> {{(devices[device].deviceMetrics.data.deviceMetrics.batteryLevel > 100) ? 100 : (Math.round(devices[device].deviceMetrics.data.deviceMetrics.batteryLevel)) }}</b> </li>
+                <li v-if="devices[device]?.deviceMetrics?.data?.deviceMetrics?.voltage"> Battery Voltage: <b> {{Number(devices[device]?.deviceMetrics?.data?.deviceMetrics?.voltage).toFixed(2)}}</b> </li>
+                <li v-if="devices[device]?.deviceMetrics?.data?.deviceMetrics?.channelUtilization"> Channel Utilization: <b> {{Number(devices[device]?.deviceMetrics?.data?.deviceMetrics?.channelUtilization).toFixed(1)}}</b> </li>
+                <li v-if="devices[device]?.deviceMetrics?.data?.deviceMetrics?.airUtilTx"> Air Util Tx: <b> {{Number(devices[device]?.deviceMetrics?.data?.deviceMetrics?.airUtilTx).toFixed(1)}}</b> </li>
+              </ul>
+
+              <dl v-if="devices[device]?.environmentMetrics?.from"><hr><b>Environment Metrics</b> {{ timeAgo(new Date(devices[device]?.environmentMetrics?.data?.time * 1000).getTime()) }}</dl>
+              <ul v-if="devices[device]?.environmentMetrics?.from">
+                <li v-if="devices[device]?.environmentMetrics?.rxRssi"> rxRssi: <b> {{devices[device]?.environmentMetrics?.rxRssi}}</b> </li>
+                <li v-if="devices[device]?.environmentMetrics?.rxSnr"> rxSnr: <b> {{devices[device]?.environmentMetrics?.rxSnr}}</b> </li>
+                <li v-if="devices[device]?.environmentMetrics?.data?.environmentMetrics?.temperature"> Temperature: <b> {{Number(devices[device]?.environmentMetrics?.data?.environmentMetrics?.temperature).toFixed(1)}}</b> </li>
+                <li v-if="devices[device]?.environmentMetrics?.data?.environmentMetrics?.relativeHumidity"> Relative Humidity: <b> {{Number(devices[device]?.environmentMetrics?.data?.environmentMetrics?.relativeHumidity).toFixed(0)}}</b> </li>
+                <li v-if="devices[device]?.environmentMetrics?.data?.environmentMetrics?.barometricPressure"> Barometric Pressure: <b> {{Number(devices[device]?.environmentMetrics?.data?.environmentMetrics?.barometricPressure).toFixed(0)}}</b> </li>
+                <li v-if="devices[device]?.environmentMetrics?.data?.environmentMetrics?.gasResistance"> Gas Resistance: <b> {{Number(devices[device]?.environmentMetrics?.data?.environmentMetrics?.gasResistance).toFixed(1)}}</b> </li>
+                <li v-if="devices[device]?.environmentMetrics?.data?.environmentMetrics?.voltage"> Voltage: <b> {{Number(devices[device]?.environmentMetrics?.data?.environmentMetrics?.voltage).toFixed(1)}}</b> </li>
+                <li v-if="devices[device]?.environmentMetrics?.data?.environmentMetrics?.current"> Current: <b> {{Number(devices[device]?.environmentMetrics?.data?.environmentMetrics?.current).toFixed(1)}}</b> </li>
+              </ul>
+              
+              <dl v-if="devices[device]?.message?.from "><hr><b>Last public Message</b> {{ timeAgo(new Date(Date.parse(devices[device]?.message?.rxTime)).getTime()) }}</dl>
+              <ul v-if="devices[device]?.message?.from">
+                <li v-if="devices[device]?.message?.rxRssi"> rxRssi: <b> {{devices[device]?.message?.rxRssi}}</b> </li>
+                <li v-if="devices[device]?.message?.rxSnr"> rxSnr: <b> {{devices[device]?.message?.rxSnr}}</b> </li>
+                <li v-if="devices[device]?.message?.hopLimit"> Message Hop Limit: <b> {{devices[device]?.message?.hopLimit}}</b> </li>
+                <li v-if="devices[device]?.message?.type === 'broadcast' && devices[device]?.message?.data"> Message: <b> {{devices[device]?.message?.data}}</b> </li>
+              </ul>
+
+               <!-- ниже немного не работает таймер? тестируй -->
+              <dl v-if="devices[device]?.routing?.from && (Date.now() - Date.parse(devices[device]?.routing?.rxTime) < 10800*1000)"><hr><b>Last Ping </b> {{ timeAgo(new Date(Date.parse(devices[device]?.routing?.rxTime)).getTime()) }}</dl>
+              <ul v-if="devices[device]?.routing?.from && (Date.now() - Date.parse(devices[device]?.routing?.rxTime) < 10800*1000)">
+                <li v-if="devices[device]?.routing?.rxRssi"> Ping rxRssi: <b> {{devices[device]?.routing?.rxRssi}}</b> </li>
+                <li v-if="devices[device]?.routing?.rxSnr"> Ping rxSnr: <b> {{devices[device]?.routing?.rxSnr}}</b> </li>
+                <li v-if="devices[device]?.routing?.hopLimit"> Ping Hop Limit: <b> {{devices[device]?.routing?.hopLimit}}</b> </li>
+                <li v-if="devices[device]?.routing?.type"> Ping Type: <b> {{devices[device]?.routing?.type}}</b> </li>
+                <li v-if="devices[device]?.routing?.data?.errorReason === 'NONE' "> Last Ping state: <b> Ping OK</b> </li>
+                <li v-if="devices[device]?.routing?.data?.errorReason === 'NO_RESPONSE' "> Last Ping state: <b> NO RESPONSE</b> </li>
+              </ul>
+              
+              <dl v-if="devices[device].server"> <hr> <b>MQTT Server: </b> </dl>
+                <ul>
+                  <li> {{devices[device].server}} </li>
+                </ul>
+            </ul>
+
+
+            
+            <!-- <table>
               <tbody>
                 <tr>
                   <td>MQTT Server</td>
@@ -176,7 +269,7 @@
                   <td>Last public message: </td> <td>{{devices[device]?.message?.data }} </td>
                 </tr>
                 </tbody>
-            </table>
+            </table> -->
           </div>
         </div>
   </div>
@@ -269,6 +362,9 @@ const filtered = computed(() => {
       else if (devices.value[candidate]?.user?.data?.id.toLowerCase().match(needle)) {
         candidates[candidate] = devices.value[candidate]
       }
+      // else if (devices.value[candidate]?.environmentMetrics?.from.toLowerCase().match(needle)) {
+      //   candidates[candidate] = devices.value[candidate] // почему не работает?
+      // }
     }
     return Object.keys(candidates)
   }
@@ -293,7 +389,22 @@ const handleTableOpen = () => {
 
 const handleTableClose = () => {
   shouldShowTableModal.value = false;
+}
+
+const timeAgo = (date) => {
+  const seconds = Math.floor((new Date() - date) / 1000);
+  const min = Math.floor(seconds / 60);
+  if (min >= 180) {
+    return // выводим пусто
+  }
+  if (min >= 1) {
+    return min + " min ago";
+  }
+  if (seconds < 10) return "just now";
+  return Math.floor(seconds) + " sec ago";
 };
+
+
 </script>
 <style lang="scss">
 .filter-wrapper {
@@ -301,5 +412,8 @@ const handleTableClose = () => {
   top: 0;
   left: 0;
   background: white;
+}
+li {
+  padding-left: 10px;
 }
 </style>
