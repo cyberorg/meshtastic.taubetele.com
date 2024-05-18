@@ -5,28 +5,31 @@
     title="Charts"
     @close="$emit('close')"
   >
-    <div>
-      <div v-for="metric in metricsList">
-        <div class="tab-title">
-          {{ titles[metric] }}
-        </div>
-        <div class="tabs">
-          <button
-            type="button"
-            class="tab"
-            :class="{ active: item === type }"
-            v-for="item in metrics[metric]"
-            @click="handleTabClick(item)"
-          >
-            {{ titles[item] }}
-          </button>
+    <div class="charts-wrapper">
+      <div class="tabs">
+        <div v-for="metric in metricsList">
+          <div class="tab-title">
+            {{ titles[metric] }}
+          </div>
+          <div class="tabs">
+            <button
+              type="button"
+              class="tab"
+              :class="{ active: types.includes(item) }"
+              v-for="item in metrics[metric]"
+              @click="handleTabClick(item)"
+            >
+              {{ titles[item] }}
+            </button>
+          </div>
         </div>
       </div>
+      <div class="charts-container">
+        <charts
+          :series="chartSeries"
+        />
+      </div>
     </div>
-    <charts
-      :type="type"
-      :data="chartData"
-    />
   </modal>
 </template>
 <script setup>
@@ -63,28 +66,37 @@ const metrics = {
 const metricsList = Object.keys(metrics);
 
 const data = ref(null);
-const type = ref('temperature');
+const types = ref(['temperature']);
 
 const { nodeId } = toRefs(props);
 
 const handleTabClick = (tab) => {
-  type.value = tab;
+  if (types.value.includes(tab)) {
+    types.value = types.value.filter((item) => item !== tab);
+  } else {
+    types.value = [...types.value, tab];
+  }
 };
 
-const chartData = computed(() => {
+const chartSeries = computed(() => {
   if (!data.value) {
     return [];
   }
 
+  return types.value.map((type) => {
+    const metricType = metrics.device.includes(type)
+      ? 'device'
+      : 'environment';
+    const chartData = data.value[metricType].map((item) => ({
+      x: item.time,
+      y: item[type],
+    }));
 
-  const metricType = metrics.device.includes(type.value)
-    ? 'device'
-    : 'environment';
-
-  return data.value[metricType].map((item) => ({
-    x: item.time,
-    y: item[type.value],
-  }));
+    return {
+      name: titles[type],
+      data: chartData,
+    };
+  });
 });
 
 const fetcData = async () => {
@@ -110,6 +122,20 @@ onMounted(() => {
 });
 </script>
 <style lang="scss">
+.charts-wrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.charts-container {
+  flex-grow: 1;
+
+  .hc {
+    height: 100%;
+  }
+}
+
 .tab-title {
   margin-bottom: 10px;
   text-transform: uppercase;

@@ -1,36 +1,48 @@
 <template>
   <div class="modal-overlay">
-    <div class="modal">
-      <div class="modal_wrapper">
-        <div class="modal_header">
-          <div class="modal_title">
-            {{title}}
-          </div>
-          <button
-            type="button"
-            class="modal_close"
-            @click="$emit('close')"
-          >
-            <font-awesome-icon icon="fa-regular fa-circle-xmark" />
-          </button>
+    <div
+      class="modal"
+      :style="{ maxWidth: `${maxWidth}px` }"
+      :class="{ 'full-height': fullHeight, 'full-width': fullWidth  }"
+    >
+      <div class="modal_header">
+        <div class="modal_title">
+          {{title}}
         </div>
-        <div class="modal_body">
-          <div>
-            <slot />
-          </div>
-        </div>
+        <button
+          type="button"
+          class="modal_close"
+          @click="$emit('close')"
+        >
+          <font-awesome-icon icon="fa-regular fa-circle-xmark" />
+        </button>
+      </div>
+      <div class="modal_body">
+        <slot />
       </div>
     </div>
   </div>
 </template>
 <script setup>
-  import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 
-  defineProps({
-    title: String,
-  })
+const props = defineProps({
+  title: String,
+  maxWidth: {
+    type: Number,
+    default: 500,
+  },
+  fullWidth: {
+    type: Boolean,
+    default: false,
+  },
+  fullHeight: {
+    type: Boolean,
+    default: false,
+  }
+});
 </script>
-<style>
+<style lang="scss">
   .modal-overlay {
     position: fixed;
     top: 0;
@@ -42,23 +54,34 @@
 
   .modal {
     position: absolute;
-    max-height: 75vh;
-    width: 75%;
-    max-width: 75%;
-    background-color: rgb(255, 255, 255);
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    border-radius: 5px;
     display: flex;
     flex-direction: column;
-    padding: 10px 0 20px 20px;
+    z-index: 1300;
+    width: 60%;
+    max-width: 1000px;
+    max-height: 90vh;
+    background-color: rgb(255, 255, 255);
+    border-radius: 5px;
+    padding: 10px 20px;
+
+    &.full-height {
+      height: 98vh;
+      max-height: 98vh !important;
+    }
+
+    &.full-width {
+      width: 98vw;
+      max-width: 98vw !important;
+    }
   }
 
   .modal_header {
-    padding-right: 40px;
     margin-bottom: 10px;
-    position: relative;
+    display: flex;
+    justify-content: space-between;
   }
 
   .modal_title {
@@ -67,14 +90,13 @@
 
   .modal_body {
     padding-right: 20px;
+    height: 100%;
+    overflow: auto;
   }
 
   .modal_close {
     font-size: 1.5rem;
     color: rgba(0, 0, 0, 0.3);
-    position: fixed;
-    top: 10px;
-    right: 10px;
   }
 
   .modal_close svg {
@@ -83,9 +105,5 @@
 
   .modal_close:hover {
     color: rgba(0, 0, 0, 0.5);
-  }
-
-  .modal_wrapper {
-    overflow: scroll;
   }
 </style>
