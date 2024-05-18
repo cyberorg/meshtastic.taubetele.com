@@ -91,7 +91,7 @@ onMounted(async () => {
         result.geoObjects.options.set("preset", "islands#redCircleIcon");
         result.geoObjects
           .get(0)
-          .properties.set({ balloonContentBody: "Скорее всего, я тут" });
+          .properties.set({ balloonContentBody: "Are you here?" });
         map.geoObjects.add(result.geoObjects);
       });
   };
@@ -137,7 +137,7 @@ onMounted(async () => {
         Math.round(Date.now() / 1000) - device.timestamp > 3600
           ? "islands#greyStretchyIcon"
           : presetcolor;
-      const timestampfooter =
+      const timestampfooter = 
         Math.round(Date.now() / 1000) - device.timestamp > 3600
           ? new Date(device.timestamp * 1000).toLocaleString()
           : timeAgo(new Date(device.timestamp * 1000).getTime());
@@ -149,34 +149,34 @@ onMounted(async () => {
       balloonContents += `<hr>`
       const { environmentMetrics } = device?.environmentMetrics?.data || {};
       
-      if (environmentMetrics?.temperature ) {
-        balloonContents += `
+      balloonContents += `
           <button
             class="chart-button"
             type="button"
             data-node-id="${nodeId}"
-          >${chartIcon}</button> Sensors: `;
+          >${chartIcon}</button> `
+
+      if (environmentMetrics?.temperature ) {
+          balloonContents += `Sensors: `
       }
 
+
+
       if (environmentMetrics?.temperature )
-        balloonContents += `${Number(environmentMetrics?.temperature).toFixed(1)} C `
+        balloonContents += `${Number(environmentMetrics?.temperature).toFixed(1)} <iii style="color:grey;">C</iii> `
       if (environmentMetrics?.relativeHumidity) 
-        balloonContents += `${Number(device?.environmentMetrics?.data?.environmentMetrics?.relativeHumidity).toFixed(0)} % `
-      if (environmentMetrics?.barometricPressure) {
-        balloonContents += `${Math.round(device?.environmentMetrics?.data?.environmentMetrics?.barometricPressure)} hPa `;
-      }
-      if (environmentMetrics?.gasResistance) {
-        balloonContents += `<div>Gas Resistance (AQI): ${Number(
-          device?.environmentMetrics?.data?.environmentMetrics?.gasResistance
-        ).toFixed(0)} MOhms</div>`;
-      }
+        balloonContents += `${Number(device?.environmentMetrics?.data?.environmentMetrics?.relativeHumidity).toFixed(0)} <iii style="color:grey;">%</iii> `
+      if (environmentMetrics?.barometricPressure)
+        balloonContents += `${Math.round(device?.environmentMetrics?.data?.environmentMetrics?.barometricPressure)} <iii style="color:grey;">hPa </iii>`
+      if (environmentMetrics?.gasResistance) 
+        balloonContents += `<div>Gas Resistance (AQI): ${Number(device?.environmentMetrics?.data?.environmentMetrics?.gasResistance).toFixed(0)} <iii style="color:grey;"> MOhms </iii></div>`;
 
       const { deviceMetrics } = device?.deviceMetrics?.data || {};
       if (deviceMetrics?.batteryLevel) {
         balloonContents += `<div>Battery: ${
           Number(device?.deviceMetrics?.data?.deviceMetrics?.batteryLevel).toFixed(0) > 100
             ? 100
-            : Number(device?.deviceMetrics?.data?.deviceMetrics?.batteryLevel).toFixed(0)}% (${Number(device?.deviceMetrics?.data?.deviceMetrics?.voltage).toFixed(2)} V)`;
+            : Number(device?.deviceMetrics?.data?.deviceMetrics?.batteryLevel).toFixed(0)}% (${Number(device?.deviceMetrics?.data?.deviceMetrics?.voltage).toFixed(2)} V) </div>`;
       }
       if (deviceMetrics?.airUtilTx) {
         balloonContents += `<div>Air util TX: ${Number(
@@ -194,7 +194,15 @@ onMounted(async () => {
       ) {
         balloonContents += `<div>
           NodeInfo RX RSSI: ${Math.round(device?.user?.rxRssi).toFixed(0)},  
-          SNR: ${Math.round(device?.user?.rxSnr).toFixed(0)}</div>`;
+          SNR: ${Math.round(device?.user?.rxSnr).toFixed(0)}`
+          if ((Date.now() / 1000) - device?.user?.data?.time < 86400) {
+            balloonContents += `<iii style="color:grey;"> (${timeAgo(new Date(device?.user?.data?.time * 1000).getTime())})</iii>`
+
+            // 
+            //  НИРАБОТАЕТ
+            //
+          }
+          balloonContents += `</div>`
       }
       if (
         device?.position?.rxRssi !== undefined &&
@@ -203,7 +211,11 @@ onMounted(async () => {
       ) {
         balloonContents += `<div>
           Position RX RSSI: ${Math.round( device?.position?.rxRssi ).toFixed(0)},  
-          SNR: ${Math.round(device?.position?.rxSnr).toFixed(0)}</div>`
+          SNR: ${Math.round(device?.position?.rxSnr).toFixed(0)}`
+          if ((Date.now() / 1000) - device?.position?.data?.time < 86400) {
+            balloonContents += `<iii style="color:grey;"> (${timeAgo(new Date(device?.position?.data?.time * 1000).getTime())})</iii>`
+          }
+        balloonContents += `</div>`
       }
       if (
         device?.deviceMetrics?.rxRssi !== undefined &&
@@ -212,7 +224,11 @@ onMounted(async () => {
       ) {
         balloonContents += `<div>
           Device Metrics RX RSSI: ${Math.round(device?.deviceMetrics?.rxRssi).toFixed(0)},  
-          SNR: ${Math.round(device?.deviceMetrics?.rxSnr).toFixed(0)}</div>`;
+          SNR: ${Math.round(device?.deviceMetrics?.rxSnr).toFixed(0)}`
+          if ((Date.now() / 1000) - device?.deviceMetrics?.data?.time < 86400) {
+            balloonContents += `<iii style="color:grey;"> (${timeAgo(new Date(device?.deviceMetrics?.data?.time * 1000).getTime())})</iii>`
+          }
+        balloonContents += `</div>`
       }
 
       if (
@@ -221,15 +237,15 @@ onMounted(async () => {
           device?.deviceMetrics?.hopLimit) &&
         device?.user?.rxRssi !== 0
       ) {
-        balloonContents += `<div>Hop's:`;
+        balloonContents += `<HR><div>Hop's:`;
         if (device?.user?.hopLimit) {
           balloonContents += ` User: ${Number(device?.user?.hopLimit)}`;
         }
         if (device?.position?.hopLimit) {
-          balloonContents += ` Position: ${Number(device?.position?.hopLimit)}`;
+          balloonContents += `  Position: ${Number(device?.position?.hopLimit)}`;
         }
         if (device?.deviceMetrics?.hopLimit) {
-          balloonContents += ` Device Metrics: ${Number(
+          balloonContents += `  DeviceMetrics: ${Number(
             device?.deviceMetrics?.hopLimit
           )} `;
         }
@@ -302,9 +318,12 @@ onMounted(async () => {
     map.events.add("boundschange", debounce(onBoundsChange, 1000));
 
     map.events.add("contextmenu", function (e) {
-      console.log(e.get("coords"));
       alert(e.get("coords"));
     });
+    
+    map.events.add('dblclick', function () {
+      alert(e.get("coords"));
+    }); 
   };
 
   const init = () => {
