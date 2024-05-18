@@ -83,7 +83,7 @@
               <dl v-if="devices[device]?.user?.from || 
                         devices[device]?.position?.from ||
                         devices[device]?.deviceMetrics?.from ||
-                        devices[device]?.environmentMetrics?.from"><b>Node Info:</b> {{ timeAgo(new Date(Date.parse(devices[device]?.user?.rxTime)).getTime()) }}</dl>
+                        devices[device]?.environmentMetrics?.from"><b>Node Info:</b> {{ timeAgo(new Date(Date.parse(devices[device]?.user?.rxTime)).getTime() || 0) }}</dl>
               <ul>
               <li v-if="devices[device]?.user?.data?.shortName"> Short Name: <b> {{devices[device]?.user?.data?.shortName}}</b> </li>
               <li v-if="devices[device]?.user?.data?.longName"> Long Name: <b> {{devices[device]?.user?.data?.longName}}</b> </li>
@@ -148,9 +148,9 @@
                <!-- ниже немного не работает таймер? тестируй -->
               <dl v-if="devices[device]?.routing?.from && (Date.now() - Date.parse(devices[device]?.routing?.rxTime) < 10800*1000)"><hr><b>Last Ping </b> {{ timeAgo(new Date(Date.parse(devices[device]?.routing?.rxTime)).getTime()) }}</dl>
               <ul v-if="devices[device]?.routing?.from && (Date.now() - Date.parse(devices[device]?.routing?.rxTime) < 10800*1000)">
-                <li v-if="devices[device]?.routing?.rxRssi"> Ping rxRssi: <b> {{devices[device]?.routing?.rxRssi}}</b> </li>
-                <li v-if="devices[device]?.routing?.rxSnr"> Ping rxSnr: <b> {{devices[device]?.routing?.rxSnr}}</b> </li>
-                <li v-if="devices[device]?.routing?.hopLimit"> Ping Hop Limit: <b> {{devices[device]?.routing?.hopLimit}}</b> </li>
+                <li v-if="devices[device]?.routing?.rxRssi   && devices[device]?.routing?.data?.errorReason !== 'NO_RESPONSE'"> Ping rxRssi: <b> {{devices[device]?.routing?.rxRssi}}</b> </li>
+                <li v-if="devices[device]?.routing?.rxSnr    && devices[device]?.routing?.data?.errorReason !== 'NO_RESPONSE'"> Ping rxSnr: <b> {{devices[device]?.routing?.rxSnr}}</b> </li>
+                <li v-if="devices[device]?.routing?.hopLimit && devices[device]?.routing?.data?.errorReason !== 'NO_RESPONSE'"> Ping Hop Limit: <b> {{devices[device]?.routing?.hopLimit}}</b> </li>
                 <li v-if="devices[device]?.routing?.type"> Ping Type: <b> {{devices[device]?.routing?.type}}</b> </li>
                 <li v-if="devices[device]?.routing?.data?.errorReason === 'NONE' "> Last Ping state: <b> Ping OK</b> </li>
                 <li v-if="devices[device]?.routing?.data?.errorReason === 'NO_RESPONSE' "> Last Ping state: <b> NO RESPONSE</b> </li>
