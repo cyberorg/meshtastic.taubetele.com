@@ -42,7 +42,13 @@
           <td><img src=/grayStr.png></td>
           <td> нода не в сети,  последнее сообщение пришло более часа назад </td>
         </tr>
-      </table>
+      </table><br>
+      <p>
+         Каждая нода может слать следующие типы сообщений: NodeInfo, Device Metrics, Environment Metrics (данные датчиков), Position, Message, Ping. Все сообщения приходят в разное время, а могут вообще не приходить, поэтому них есть время последнего сообщения, HopLimit, rssi/snr итд.
+      </p><br>
+      <p>
+        Сервис пытается собирать данные и рисовать по ним график. Сейчас собирается только 1000 последних сообщений. 
+      </p>
     </div>
     <template v-slot:footer> This is a new modal footer. </template>
   </modal>
@@ -66,24 +72,33 @@
                 <span v-if="devices[device]?.user?.data?.longName ||
                             devices[device]?.position?.from ||
                             devices[device]?.deviceMetrics?.from ||
-                            devices[device]?.environmentMetrics?.from ">{{  devices[device]?.user?.data?.longName ||
-                                                                            devices[device]?.position?.from ||
-                                                                            devices[device]?.deviceMetrics?.from ||
-                                                                            devices[device]?.environmentMetrics?.from  }}</span>
-                <span v-else>{{ device }}</span>
+                            devices[device]?.environmentMetrics?.from">{{ devices[device]?.user?.data?.longName ||
+                                                                          devices[device]?.position?.from ||
+                                                                          devices[device]?.deviceMetrics?.from ||
+                                                                          devices[device]?.environmentMetrics?.from }}</span>
+                <span v-else>{{ device }} </span>
               </span>
-          </div>
+              <button
+              class="chart-button"
+              type="button"
+              data-node-id="${nodeId}"
+              ><svg xmlns="http://www.w3.org/2000/svg" height="1.4em" viewBox="0 0 448 512"><path d="M160 80c0-26.5 21.5-48 48-48h32c26.5 0 48 21.5 48 48V432c0 26.5-21.5 48-48 48H208c-26.5 0-48-21.5-48-48V80zM0 272c0-26.5 21.5-48 48-48H80c26.5 0 48 21.5 48 48V432c0 26.5-21.5 48-48 48H48c-26.5 0-48-21.5-48-48V272zM368 96h32c26.5 0 48 21.5 48 48V432c0 26.5-21.5 48-48 48H368c-26.5 0-48-21.5-48-48V144c0-26.5 21.5-48 48-48z" fill="currentColor" /></svg></button>
+              
+              <button 
+              v-if="devices[device]?.position?.from"
+              type="button"
+              ><svg height="1em" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20.992,9.98A8.991,8.991,0,0,0,3.01,9.932a13.95,13.95,0,0,0,8.574,12.979A1,1,0,0,0,12,23a1.012,1.012,0,0,0,.419-.09A13.948,13.948,0,0,0,20.992,9.98ZM12,20.9A11.713,11.713,0,0,1,5.008,10a6.992,6.992,0,1,1,13.984,0c0,.021,0,.045,0,.065A11.7,11.7,0,0,1,12,20.9ZM14,10a2,2,0,1,1-2-2A2,2,0,0,1,14,10Z"/></svg></button>
+            </div>
             <div v-if="((Math.round(Date.now() / 1000) - devices[device].timestamp) > 3600)" @click="addToFilter(devices[device].user?.data?.longName)" class="text-neutral-500 text-s "> Last heard: {{new Date(devices[device].timestamp * 1000).toLocaleString()}} </div>
             <div v-else>{{ timeAgo(new Date(devices[device].timestamp * 1000).getTime()) }}</div>
           </div>
           <div v-if="devices[device].opened">
             &nbsp;
             <ul>
-
               <dl v-if="devices[device]?.user?.from || 
                         devices[device]?.position?.from ||
                         devices[device]?.deviceMetrics?.from ||
-                        devices[device]?.environmentMetrics?.from"><b>Node Info:</b> {{ timeAgo(new Date(Date.parse(devices[device]?.user?.rxTime)).getTime() || 0) }}</dl>
+                        devices[device]?.environmentMetrics?.from"><b>Node Info:</b> <i>{{ timeAgo(new Date(Date.parse(devices[device]?.user?.rxTime)).getTime() || 0) }}</i></dl>
               <ul>
               <li v-if="devices[device]?.user?.data?.shortName"> Short Name: <b> {{devices[device]?.user?.data?.shortName}}</b> </li>
               <li v-if="devices[device]?.user?.data?.longName"> Long Name: <b> {{devices[device]?.user?.data?.longName}}</b> </li>
@@ -101,7 +116,7 @@
               <li v-if="devices[device]?.user?.data?.isLicensed"> Is Licensed?: <b> {{devices[device]?.user?.data?.isLicensed}}</b> </li> 
               </ul>
 
-              <dl v-if="devices[device]?.position?.from"><hr><b>Position</b> {{ timeAgo(new Date(devices[device]?.position?.data?.time * 1000).getTime()) }}</dl>
+              <dl v-if="devices[device]?.position?.from"><hr><b>Position</b> <i>{{ timeAgo(new Date(devices[device]?.position?.data?.time * 1000).getTime()) }}</i></dl>
               <ul v-if="devices[device]?.position?.from">
                 <li v-if="devices[device]?.position?.rxRssi"> rxRssi: <b> {{devices[device]?.position?.rxRssi}}</b> </li>
                 <li v-if="devices[device]?.position?.rxSnr"> rxSnr: <b> {{devices[device]?.position?.rxSnr}}</b> </li>
@@ -114,7 +129,7 @@
                 <li v-if="devices[device]?.position?.data?.groundSpeed"> Ground Speed: <b> {{devices[device]?.position?.data?.groundSpeed}}</b> </li>
               </ul>
             
-              <dl v-if="devices[device]?.deviceMetrics?.from"><hr><b>Device Metrics</b> {{ timeAgo(new Date(devices[device]?.deviceMetrics?.data?.time * 1000).getTime())}}</dl>
+              <dl v-if="devices[device]?.deviceMetrics?.from"><hr><b>Device Metrics</b> <i>{{ timeAgo(new Date(devices[device]?.deviceMetrics?.data?.time * 1000).getTime())}}</i></dl>
               <ul v-if="devices[device]?.deviceMetrics?.from">
                 <li v-if="devices[device]?.deviceMetrics?.rxRssi"> rxRssi: <b> {{devices[device]?.deviceMetrics?.rxRssi}}</b> </li>
                 <li v-if="devices[device]?.deviceMetrics?.rxSnr"> rxSnr: <b> {{devices[device]?.deviceMetrics?.rxSnr}}</b> </li>
@@ -125,7 +140,7 @@
                 <li v-if="devices[device]?.deviceMetrics?.data?.deviceMetrics?.airUtilTx"> Air Util Tx: <b> {{Number(devices[device]?.deviceMetrics?.data?.deviceMetrics?.airUtilTx).toFixed(1)}}</b> </li>
               </ul>
 
-              <dl v-if="devices[device]?.environmentMetrics?.from"><hr><b>Environment Metrics</b> {{ timeAgo(new Date(devices[device]?.environmentMetrics?.data?.time * 1000).getTime()) }}</dl>
+              <dl v-if="devices[device]?.environmentMetrics?.from"><hr><b>Environment Metrics</b> <i>{{ timeAgo(new Date(devices[device]?.environmentMetrics?.data?.time * 1000).getTime()) }}</i></dl>
               <ul v-if="devices[device]?.environmentMetrics?.from">
                 <li v-if="devices[device]?.environmentMetrics?.rxRssi"> rxRssi: <b> {{devices[device]?.environmentMetrics?.rxRssi}}</b> </li>
                 <li v-if="devices[device]?.environmentMetrics?.rxSnr"> rxSnr: <b> {{devices[device]?.environmentMetrics?.rxSnr}}</b> </li>
@@ -137,7 +152,7 @@
                 <li v-if="devices[device]?.environmentMetrics?.data?.environmentMetrics?.current"> Current: <b> {{Number(devices[device]?.environmentMetrics?.data?.environmentMetrics?.current).toFixed(1)}}</b> </li>
               </ul>
               
-              <dl v-if="devices[device]?.message?.from "><hr><b>Last public Message</b> {{ timeAgo(new Date(Date.parse(devices[device]?.message?.rxTime)).getTime()) }}</dl>
+              <dl v-if="devices[device]?.message?.from "><hr><b>Last public Message</b> <i>{{ timeAgo(new Date(Date.parse(devices[device]?.message?.rxTime)).getTime()) }}</i></dl>
               <ul v-if="devices[device]?.message?.from">
                 <li v-if="devices[device]?.message?.rxRssi"> rxRssi: <b> {{devices[device]?.message?.rxRssi}}</b> </li>
                 <li v-if="devices[device]?.message?.rxSnr"> rxSnr: <b> {{devices[device]?.message?.rxSnr}}</b> </li>
@@ -146,7 +161,7 @@
               </ul>
 
                <!-- ниже немного не работает таймер? тестируй -->
-              <dl v-if="devices[device]?.routing?.from && (Date.now() - Date.parse(devices[device]?.routing?.rxTime) < 10800*1000)"><hr><b>Last Ping </b> {{ timeAgo(new Date(Date.parse(devices[device]?.routing?.rxTime)).getTime()) }}</dl>
+              <dl v-if="devices[device]?.routing?.from && (Date.now() - Date.parse(devices[device]?.routing?.rxTime) < 10800*1000)"><hr><b>Last Ping </b> <i>{{ timeAgo(new Date(Date.parse(devices[device]?.routing?.rxTime)).getTime()) }}</i></dl>
               <ul v-if="devices[device]?.routing?.from && (Date.now() - Date.parse(devices[device]?.routing?.rxTime) < 10800*1000)">
                 <li v-if="devices[device]?.routing?.rxRssi   && devices[device]?.routing?.data?.errorReason !== 'NO_RESPONSE'"> Ping rxRssi: <b> {{devices[device]?.routing?.rxRssi}}</b> </li>
                 <li v-if="devices[device]?.routing?.rxSnr    && devices[device]?.routing?.data?.errorReason !== 'NO_RESPONSE'"> Ping rxSnr: <b> {{devices[device]?.routing?.rxSnr}}</b> </li>
@@ -394,8 +409,12 @@ const handleTableClose = () => {
 const timeAgo = (date) => {
   const seconds = Math.floor((new Date() - date) / 1000);
   const min = Math.floor(seconds / 60);
-  if (min >= 180) {
-    return // выводим пусто
+  const hours = Math.floor(seconds / 60 / 60);
+  if (hours > 23) {
+    return "old data" // выводим пусто
+  }
+  if (hours >= 1) {
+    return hours + " hours ago";
   }
   if (min >= 1) {
     return min + " min ago";

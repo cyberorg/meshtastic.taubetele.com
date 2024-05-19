@@ -52,9 +52,12 @@ const { devices } = toRefs(props);
 
 const timeAgo = (date) => {
   const seconds = Math.floor((new Date() - date) / 1000);
-  const interval = Math.floor(seconds / 60);
-  if (interval >= 1) {
-    return interval + " min ago";
+  const min = Math.floor(seconds / 60);
+  if (min > 180) {
+    return
+  }
+  if (min >= 1) {
+    return min + " min ago";
   }
   if (seconds < 10) return "just now";
   return Math.floor(seconds) + " sec ago";
@@ -246,7 +249,7 @@ onMounted(async () => {
           device?.user?.rxRssi !== 0) {
         balloonContents += `<HR><div>Hop's:`;
         if (device?.user?.hopLimit) {
-          balloonContents += ` User: ${Number(device?.user?.hopLimit)}`;
+          balloonContents += ` Node Info: ${Number(device?.user?.hopLimit)}`;
         }
         if (device?.position?.hopLimit) {
           balloonContents += `  Position: ${Number(device?.position?.hopLimit)}`;
