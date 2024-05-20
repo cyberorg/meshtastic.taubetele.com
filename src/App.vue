@@ -47,10 +47,10 @@
          Каждая нода может слать следующие типы сообщений: NodeInfo, Device Metrics, Environment Metrics (данные датчиков), Position, Message, Ping. Все сообщения приходят в разное время, а могут вообще не приходить, поэтому них есть время последнего сообщения, HopLimit, rssi/snr итд.
       </p><br>
       <p>
-        Сервис пытается собирать данные и рисовать по ним график. Сейчас собирается только 1000 последних сообщений. 
+        Сервис пытается собирать данные и рисовать по ним графики. Сейчас собирается только 1000 последних сообщений. 
       </p>
     </div>
-    <template v-slot:footer> This is a new modal footer. </template>
+    <template v-slot:footer> This is a new modal footer. ?</template>
   </modal>
 
   <modal
@@ -116,11 +116,11 @@
               <li v-if="devices[device]?.user?.data?.isLicensed"> Is Licensed?: <b> {{devices[device]?.user?.data?.isLicensed}}</b> </li> 
               </ul>
 
-              <dl v-if="devices[device]?.position?.from"><hr><b>Position</b> <i>{{ timeAgo(new Date(devices[device]?.position?.data?.time * 1000).getTime()) }}</i></dl>
+              <dl v-if="devices[device]?.position?.from"><hr><b> Position </b> <i>{{ timeAgo(new Date(devices[device]?.position?.data?.time * 1000).getTime()) }}</i></dl>
               <ul v-if="devices[device]?.position?.from">
                 <li v-if="devices[device]?.position?.rxRssi"> rxRssi: <b> {{devices[device]?.position?.rxRssi}}</b> </li>
                 <li v-if="devices[device]?.position?.rxSnr"> rxSnr: <b> {{devices[device]?.position?.rxSnr}}</b> </li>
-                <li v-if="devices[device]?.position?.hopLimit"> Position Hop Limit: <b> {{devices[device]?.position?.hopLimit}}</b> </li>
+                <li v-if="devices[device]?.position?.hopLimit"> Hop: <b> {{devices[device]?.position?.hopLimit}}</b> </li>
                 <li v-if="devices[device]?.position?.data?.latitudeI"> Latitude: <b> {{devices[device]?.position?.data?.latitudeI/10000000}}</b> </li>
                 <li v-if="devices[device]?.position?.data?.longitudeI"> Longitude: <b> {{devices[device]?.position?.data?.longitudeI/10000000}}</b> </li>
                 <li v-if="devices[device]?.position?.data?.altitude"> Altitude: <b> {{devices[device]?.position?.data?.altitude}}</b> </li>
@@ -129,11 +129,11 @@
                 <li v-if="devices[device]?.position?.data?.groundSpeed"> Ground Speed: <b> {{devices[device]?.position?.data?.groundSpeed}}</b> </li>
               </ul>
             
-              <dl v-if="devices[device]?.deviceMetrics?.from"><hr><b>Device Metrics</b> <i>{{ timeAgo(new Date(devices[device]?.deviceMetrics?.data?.time * 1000).getTime())}}</i></dl>
+              <dl v-if="devices[device]?.deviceMetrics?.from"><hr><b> Device Metrics </b> <i>{{ timeAgo(new Date(devices[device]?.deviceMetrics?.data?.time * 1000).getTime())}}</i></dl>
               <ul v-if="devices[device]?.deviceMetrics?.from">
                 <li v-if="devices[device]?.deviceMetrics?.rxRssi"> rxRssi: <b> {{devices[device]?.deviceMetrics?.rxRssi}}</b> </li>
                 <li v-if="devices[device]?.deviceMetrics?.rxSnr"> rxSnr: <b> {{devices[device]?.deviceMetrics?.rxSnr}}</b> </li>
-                <li v-if="devices[device]?.deviceMetrics?.hopLimit"> Device Metrics Hop Limit: <b> {{devices[device]?.deviceMetrics?.hopLimit}}</b> </li>
+                <li v-if="devices[device]?.deviceMetrics?.hopLimit"> Hop: <b> {{devices[device]?.deviceMetrics?.hopLimit}}</b> </li>
                 <li v-if="devices[device]?.deviceMetrics?.data?.deviceMetrics?.batteryLevel"> Battery Level: <b> {{(devices[device].deviceMetrics.data.deviceMetrics.batteryLevel > 100) ? 100 : (Math.round(devices[device].deviceMetrics.data.deviceMetrics.batteryLevel)) }}</b> </li>
                 <li v-if="devices[device]?.deviceMetrics?.data?.deviceMetrics?.voltage"> Battery Voltage: <b> {{Number(devices[device]?.deviceMetrics?.data?.deviceMetrics?.voltage).toFixed(2)}}</b> </li>
                 <li v-if="devices[device]?.deviceMetrics?.data?.deviceMetrics?.channelUtilization"> Channel Utilization: <b> {{Number(devices[device]?.deviceMetrics?.data?.deviceMetrics?.channelUtilization).toFixed(1)}}</b> </li>
@@ -144,6 +144,7 @@
               <ul v-if="devices[device]?.environmentMetrics?.from">
                 <li v-if="devices[device]?.environmentMetrics?.rxRssi"> rxRssi: <b> {{devices[device]?.environmentMetrics?.rxRssi}}</b> </li>
                 <li v-if="devices[device]?.environmentMetrics?.rxSnr"> rxSnr: <b> {{devices[device]?.environmentMetrics?.rxSnr}}</b> </li>
+                <li v-if="devices[device]?.environmentMetrics?.hopLimit"> Hop: <b> {{devices[device]?.deviceMetrics?.hopLimit}}</b> </li>
                 <li v-if="devices[device]?.environmentMetrics?.data?.environmentMetrics?.temperature"> Temperature: <b> {{Number(devices[device]?.environmentMetrics?.data?.environmentMetrics?.temperature).toFixed(1)}}</b> </li>
                 <li v-if="devices[device]?.environmentMetrics?.data?.environmentMetrics?.relativeHumidity"> Relative Humidity: <b> {{Number(devices[device]?.environmentMetrics?.data?.environmentMetrics?.relativeHumidity).toFixed(0)}}</b> </li>
                 <li v-if="devices[device]?.environmentMetrics?.data?.environmentMetrics?.barometricPressure"> Barometric Pressure: <b> {{Number(devices[device]?.environmentMetrics?.data?.environmentMetrics?.barometricPressure).toFixed(0)}}</b> </li>
@@ -156,16 +157,16 @@
               <ul v-if="devices[device]?.message?.from">
                 <li v-if="devices[device]?.message?.rxRssi"> rxRssi: <b> {{devices[device]?.message?.rxRssi}}</b> </li>
                 <li v-if="devices[device]?.message?.rxSnr"> rxSnr: <b> {{devices[device]?.message?.rxSnr}}</b> </li>
-                <li v-if="devices[device]?.message?.hopLimit"> Message Hop Limit: <b> {{devices[device]?.message?.hopLimit}}</b> </li>
+                <li v-if="devices[device]?.message?.hopLimit"> Hop: <b> {{devices[device]?.message?.hopLimit}}</b> </li>
                 <li v-if="devices[device]?.message?.type === 'broadcast' && devices[device]?.message?.data"> Message: <b> {{devices[device]?.message?.data}}</b> </li>
               </ul>
 
                <!-- ниже немного не работает таймер? тестируй -->
               <dl v-if="devices[device]?.routing?.from && (Date.now() - Date.parse(devices[device]?.routing?.rxTime) < 10800*1000)"><hr><b>Last Ping </b> <i>{{ timeAgo(new Date(Date.parse(devices[device]?.routing?.rxTime)).getTime()) }}</i></dl>
               <ul v-if="devices[device]?.routing?.from && (Date.now() - Date.parse(devices[device]?.routing?.rxTime) < 10800*1000)">
-                <li v-if="devices[device]?.routing?.rxRssi   && devices[device]?.routing?.data?.errorReason !== 'NO_RESPONSE'"> Ping rxRssi: <b> {{devices[device]?.routing?.rxRssi}}</b> </li>
-                <li v-if="devices[device]?.routing?.rxSnr    && devices[device]?.routing?.data?.errorReason !== 'NO_RESPONSE'"> Ping rxSnr: <b> {{devices[device]?.routing?.rxSnr}}</b> </li>
-                <li v-if="devices[device]?.routing?.hopLimit && devices[device]?.routing?.data?.errorReason !== 'NO_RESPONSE'"> Ping Hop Limit: <b> {{devices[device]?.routing?.hopLimit}}</b> </li>
+                <li v-if="devices[device]?.routing?.rxRssi   && devices[device]?.routing?.data?.errorReason !== 'NO_RESPONSE'"> rxRssi: <b> {{devices[device]?.routing?.rxRssi}}</b> </li>
+                <li v-if="devices[device]?.routing?.rxSnr    && devices[device]?.routing?.data?.errorReason !== 'NO_RESPONSE'"> rxSnr: <b> {{devices[device]?.routing?.rxSnr}}</b> </li>
+                <li v-if="devices[device]?.routing?.hopLimit && devices[device]?.routing?.data?.errorReason !== 'NO_RESPONSE'"> Hop: <b> {{devices[device]?.routing?.hopLimit}}</b> </li>
                 <li v-if="devices[device]?.routing?.type"> Ping Type: <b> {{devices[device]?.routing?.type}}</b> </li>
                 <li v-if="devices[device]?.routing?.data?.errorReason === 'NONE' "> Last Ping state: <b> Ping OK</b> </li>
                 <li v-if="devices[device]?.routing?.data?.errorReason === 'NO_RESPONSE' "> Last Ping state: <b> NO RESPONSE</b> </li>

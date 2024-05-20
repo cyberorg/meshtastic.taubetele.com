@@ -53,7 +53,7 @@ const { devices } = toRefs(props);
 const timeAgo = (date) => {
   const seconds = Math.floor((new Date() - date) / 1000);
   const min = Math.floor(seconds / 60);
-  if (min > 180) {
+  if (min > 99) {
     return
   }
   if (min >= 1) {
