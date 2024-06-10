@@ -53,23 +53,24 @@ const props = defineProps({
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  max-height: 96vh;
   display: flex;
   flex-direction: column;
   z-index: 1300;
-  width: 96%;
-  max-width: 96%;
+  width: 100%;
+  max-height: 100vh;
+  max-width: 100vw;
   background-color: rgb(255, 255, 255);
   border-radius: 5px;
   padding: 10px 20px;
 
   &.full-height {
-    height: 96vh;
+    height: 92vh;
+    margin: 1.5rem auto;
     max-height: 96vh !important;
   }
 
   &.full-width {
-    width: 96vw;
+    width: 100vw;
     max-width: 96vw !important;
   }
 }
@@ -91,7 +92,7 @@ const props = defineProps({
 }
 
 .modal_close {
-  font-size: 1.5rem;
+  font-size: 1.6rem;
   color: rgba(0, 0, 0, 0.3);
 }
 
@@ -100,6 +101,6 @@ const props = defineProps({
 }
 
 .modal_close:hover {
-  color: rgba(0, 0, 0, 0.5);
+  color: rgba(0, 0, 0, 0.6);
 }
 </style>
