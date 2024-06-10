@@ -543,7 +543,6 @@
               </li>
             </ul>
 
-            <!-- ниже немного не работает таймер? тестируй -->
             <dl
               v-if="
                 devices[device]?.routing?.from &&
@@ -615,6 +614,47 @@
             <ul>
               <li>{{ devices[device].server }}</li>
             </ul>
+            <dl
+              v-if="devices[device]?.neighborInfo?.data?.neighbors.length !== 0"
+            >
+              <hr />
+              <b>Neighbor Info: </b>
+            </dl>
+            <ul>
+              <li
+                v-for="nodeId in devices[device]?.neighborInfo?.data?.neighbors"
+              >
+                {{
+                  devices[nodeId.nodeId]?.user?.data?.longName ||
+                  devices[nodeId.nodeId]?.user?.data?.shortName ||
+                  nodeId.nodeId
+                }}
+                (id: {{ nodeId.nodeId }})
+
+                <button
+                  type="button"
+                  v-if="devices[nodeId.nodeId]?.position?.from"
+                  :data-latitude="
+                    devices[nodeId.nodeId]?.position?.data?.latitudeI / 10000000
+                  "
+                  :data-longitude="
+                    devices[nodeId.nodeId]?.position?.data?.longitudeI /
+                    10000000
+                  "
+                  @click.stop="handleLocationClick"
+                >
+                  <svg
+                    height="1.1em"
+                    viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M20.992,9.98A8.991,8.991,0,0,0,3.01,9.932a13.95,13.95,0,0,0,8.574,12.979A1,1,0,0,0,12,23a1.012,1.012,0,0,0,.419-.09A13.948,13.948,0,0,0,20.992,9.98ZM12,20.9A11.713,11.713,0,0,1,5.008,10a6.992,6.992,0,1,1,13.984,0c0,.021,0,.045,0,.065A11.7,11.7,0,0,1,12,20.9ZM14,10a2,2,0,1,1-2-2A2,2,0,0,1,14,10Z"
+                    />
+                  </svg>
+                </button>
+              </li>
+            </ul>
           </ul>
         </div>
       </div>
@@ -669,8 +709,8 @@ onMounted(async () => {
 
   setTimeout(async function run() {
     await fetchDevices();
-    setTimeout(run, 2000);
-  }, 2000);
+    setTimeout(run, 3000);
+  }, 3000);
 });
 
 const handleChartOpen = (nodeId) => {

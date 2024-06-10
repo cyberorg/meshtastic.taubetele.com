@@ -32,15 +32,23 @@ const props = defineProps({
     required: true,
     type: Object,
   },
+  center: {
+    type: Array,
+    default: [55.76, 37.64],
+  },
 });
 
-const { devices } = toRefs(props);
+const { devices, center } = toRefs(props);
 
 const timeAgo = (date) => {
   const seconds = Math.floor((new Date() - date) / 1000);
   const min = Math.floor(seconds / 60);
-  if (min > 99) {
-    return;
+  const hours = Math.floor(seconds / 60 / 60);
+  if (hours > 23) {
+    return "old data"; // выводим пусто
+  }
+  if (hours >= 1) {
+    return hours + " hours ago";
   }
   if (min >= 1) {
     return min + " min ago";
@@ -57,24 +65,11 @@ onMounted(async () => {
 
   const renderSelfBallon = () => {
     let geolocation = ymaps.geolocation;
-
-    // Сравним положение, вычисленное по ip пользователя и положение, вычисленное средствами браузера.
-    // geolocation.get({
-    //     provider: 'yandex',
-    //     mapStateAutoApply: true
-    // }).then(function (result) {
-    //     result.geoObjects.options.set('preset', 'islands#redCircleIcon');
-    //     result.geoObjects.get(0).properties.set({
-    //         balloonContentBody: 'Мое местоположение по IP'
-    //     })
-    //     map.geoObjects.add(result.geoObjects);
-    // })
-
     geolocation
       .get({
-        provider: "browser",
-        zoom: 8,
+        provider: "auto", // or set "browser"
         mapStateAutoApply: false,
+        timeout: 10000,
       })
       .then(function (result) {
         result.geoObjects.options.set("preset", "islands#redCircleIcon");
@@ -82,11 +77,12 @@ onMounted(async () => {
           .get(0)
           .properties.set({ balloonContentBody: "Are you here?" });
         map.geoObjects.add(result.geoObjects);
+        map.setCenter(result.geoObjects.get(0).geometry.getCoordinates(), 10);
       });
   };
 
   const renderBallons = (devices) => {
-    renderSelfBallon();
+    // renderSelfBallon(); // либо я двигаюсь в онлайне, либо она тебя заебет
 
     const placemarks = [];
 
@@ -190,7 +186,7 @@ onMounted(async () => {
         balloonContents += `<div>
         Air util TX: ${Number(
           device?.deviceMetrics?.data?.deviceMetrics?.airUtilTx
-        ).toFixed(1)} %, 
+        ).toFixed(1)} %,
         Channel util: ${Number(
           device?.deviceMetrics?.data?.deviceMetrics?.channelUtilization
         ).toFixed(1)} %
@@ -204,12 +200,11 @@ onMounted(async () => {
         device?.user?.rxRssi !== 0
       ) {
         balloonContents += `<div>
-          Node Info RSSI: ${Math.round(device?.user?.rxRssi).toFixed(0)},  
+          Node Info RSSI: ${Math.round(device?.user?.rxRssi).toFixed(0)},
           SNR: ${Math.round(device?.user?.rxSnr).toFixed(0)} `;
-        if (Date.now() - Date.parse(device?.user?.rxTime) < 10800 * 1000) {
-          // millis
+        if (Date.now() - device?.user?.serverTime * 1000 < 10800) {
           balloonContents += `<iii style="color:grey;"> (${timeAgo(
-            new Date(Date.parse(device?.user?.rxTime)).getTime()
+            new Date(device?.user?.serverTime).getTime()
           )})</iii>`;
         }
         balloonContents += `</div>`;
@@ -220,11 +215,11 @@ onMounted(async () => {
         device?.position?.rxRssi !== 0
       ) {
         balloonContents += `<div>
-          Position RSSI: ${Math.round(device?.position?.rxRssi).toFixed(0)},  
+          Position RSSI: ${Math.round(device?.position?.rxRssi).toFixed(0)},
           SNR: ${Math.round(device?.position?.rxSnr).toFixed(0)}`;
-        if (Date.now() / 1000 - device?.position?.data?.time < 10800) {
+        if (Date.now() - device?.position?.serverTime * 1000 < 10800) {
           balloonContents += `<iii style="color:grey;"> (${timeAgo(
-            new Date(device?.position?.data?.time * 1000).getTime()
+            new Date(device?.position?.serverTime).getTime()
           )})</iii>`;
         }
         balloonContents += `</div>`;
@@ -237,11 +232,11 @@ onMounted(async () => {
         balloonContents += `<div>
           Device Metrics RSSI: ${Math.round(
             device?.deviceMetrics?.rxRssi
-          ).toFixed(0)},  
+          ).toFixed(0)},
           SNR: ${Math.round(device?.deviceMetrics?.rxSnr).toFixed(0)}`;
-        if (Date.now() / 1000 - device?.deviceMetrics?.data?.time < 10800) {
+        if (Date.now() - device?.deviceMetrics?.serverTime * 1000 < 10800) {
           balloonContents += `<iii style="color:grey;"> (${timeAgo(
-            new Date(device?.deviceMetrics?.data?.time * 1000).getTime()
+            new Date(device?.deviceMetrics?.serverTime).getTime()
           )})</iii>`;
         }
         balloonContents += `</div>`;
@@ -255,14 +250,14 @@ onMounted(async () => {
         balloonContents += `<div>
           Environment Metrics RSSI: ${Math.round(
             device?.environmentMetrics?.rxRssi
-          ).toFixed(0)},  
+          ).toFixed(0)},
           SNR: ${Math.round(device?.environmentMetrics?.rxSnr).toFixed(0)}`;
         if (
-          Date.now() / 1000 - device?.environmentMetrics?.data?.time <
+          Date.now() - device?.environmentMetrics?.serverTime * 1000 <
           10800
         ) {
           balloonContents += `<iii style="color:grey;"> (${timeAgo(
-            new Date(device?.environmentMetrics?.data?.time * 1000).getTime()
+            new Date(device?.environmentMetrics?.serverTime).getTime()
           )})</iii>`;
         }
         balloonContents += `</div>`;
@@ -301,7 +296,16 @@ onMounted(async () => {
         balloonContents += `<div>Server: ${device?.server}</div>`;
       }
       if (device?.message?.data !== undefined) {
-        balloonContents += `<hr><div>Last public message: ${device.message.data} </div>`;
+        balloonContents += `<hr><div>Last public message: ${device.message.data}`;
+        if (
+          Date.now() - device?.environmentMetrics?.serverTime * 1000 <
+          10800
+        ) {
+          balloonContents += `<iii style="color:grey;"> (${timeAgo(
+            new Date(device?.message?.serverTime).getTime()
+          )})</iii>`;
+        }
+        balloonContents += `</div>`;
       }
 
       placemarks.push(
@@ -312,7 +316,7 @@ onMounted(async () => {
             balloonContentHeader: `
               <div>Short Name: ${device?.user?.data?.shortName}</div>
               <div>Long Name: ${device?.user?.data?.longName}</div>`,
-            balloonContentBody: ` 
+            balloonContentBody: `
               <div>Node ID: ${device?.user?.data?.id} (${nodeId})</div>
               <div>Hardware: ${device?.user?.data?.hwModel}</div>
               <div>Role: ${device?.user?.data?.role}</div>
@@ -397,6 +401,7 @@ onMounted(async () => {
     // console.log("!!! init", devices.value);
 
     initYMap();
+    renderSelfBallon();
     // renderBallons();
 
     renderBallons(devices?.value);
@@ -405,6 +410,11 @@ onMounted(async () => {
       // следит за обновлениями данных
       map.geoObjects?.removeAll();
       renderBallons(newDevices);
+    });
+
+    watch(center, (newValue) => {
+      const zoom = 16;
+      map.setCenter(newValue, zoom);
     });
   };
 
