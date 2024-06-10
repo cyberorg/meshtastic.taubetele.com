@@ -92,12 +92,11 @@
           >
             <span
               :class="
-                devices[device]?.user?.rxSnr === 0 &&
-                devices[device]?.user?.rxRssi === 0
-                  ? 'text-green-600'
-                  : Math.round(Date.now() / 1000) - devices[device].timestamp >
-                    3600
+                Math.round(Date.now() / 1000) - devices[device].timestamp > 3600
                   ? 'text-neutral-500'
+                  : devices[device]?.user?.rxSnr === 0 &&
+                    devices[device]?.user?.rxRssi === 0
+                  ? 'text-green-600'
                   : 'text-blue-600'
               "
             >
@@ -192,9 +191,10 @@
               <b>Node Info: </b>
               <i>{{
                 timeAgo(
-                  new Date(
-                    Date.parse(devices[device]?.user?.rxTime)
-                  ).getTime() || 0
+                  new Date(devices[device]?.user?.serverTime).getTime()
+                ) ||
+                timeAgo(
+                  new Date(Date.parse(devices[device]?.user?.rxTime)).getTime()
                 )
               }}</i>
             </dl>
@@ -245,9 +245,12 @@
               <b> Position: </b>
               <i>{{
                 timeAgo(
+                  new Date(devices[device]?.position?.serverTime).getTime()
+                ) ||
+                timeAgo(
                   new Date(
                     devices[device]?.position?.data?.time * 1000
-                  ).getTime()
+                  ).getTime() || 0
                 )
               }}</i>
             </dl>
@@ -298,9 +301,14 @@
               <b> Device Metrics: </b>
               <i>{{
                 timeAgo(
+                  new Date(devices[device]?.deviceMetrics?.serverTime).getTime()
+                ) ||
+                timeAgo(
                   new Date(
-                    devices[device]?.deviceMetrics?.data?.time * 1000
-                  ).getTime()
+                    Date.parse(
+                      devices[device]?.deviceMetrics?.data?.time * 1000
+                    ).getTime()
+                  )
                 )
               }}</i>
             </dl>
@@ -388,7 +396,7 @@
                 timeAgo(
                   new Date(
                     devices[device]?.environmentMetrics?.data?.time * 1000
-                  ).getTime()
+                  ).getTime() || 0
                 )
               }}</i>
             </dl>
@@ -506,9 +514,12 @@
               <b>Last public Message: </b>
               <i>{{
                 timeAgo(
+                  new Date(devices[device]?.message?.serverTime).getTime()
+                ) ||
+                timeAgo(
                   new Date(
-                    Date.parse(devices[device]?.message?.rxTime)
-                  ).getTime()
+                    Date.parse(devices[device]?.message?.rxTime).getTime()
+                  )
                 )
               }}</i>
             </dl>
@@ -536,25 +547,26 @@
             <dl
               v-if="
                 devices[device]?.routing?.from &&
-                Date.now() - Date.parse(devices[device]?.routing?.rxTime) <
-                  10800 * 1000
+                Date.now() - devices[device]?.routing?.serverTime < 10800 * 1000
               "
             >
               <hr />
               <b>Last Ping: </b>
               <i>{{
                 timeAgo(
+                  new Date(devices[device]?.routing?.serverTime).getTime()
+                ) ||
+                timeAgo(
                   new Date(
-                    Date.parse(devices[device]?.routing?.rxTime)
-                  ).getTime()
+                    Date.parse(devices[device]?.routing?.rxTime).getTime()
+                  )
                 )
               }}</i>
             </dl>
             <ul
               v-if="
                 devices[device]?.routing?.from &&
-                Date.now() - Date.parse(devices[device]?.routing?.rxTime) <
-                  10800 * 1000
+                Date.now() - devices[device]?.routing?.serverTime < 10800 * 1000
               "
             >
               <li

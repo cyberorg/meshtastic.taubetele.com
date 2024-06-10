@@ -66,7 +66,7 @@ const metrics = {
 const metricsList = Object.keys(metrics);
 
 const data = ref(null);
-const types = ref(["temperature"]);
+const types = ref(["channelUtilization"]);
 
 const { nodeId } = toRefs(props);
 
