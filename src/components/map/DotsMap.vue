@@ -324,7 +324,7 @@ onMounted(async () => {
               <div>Hardware: ${device?.user?.data?.hwModel}</div>
               <div>Role: ${device?.user?.data?.role}</div>
               <hr>
-              <div>Position: <a href="yandexmaps://maps.yandex.ru/?ll=${latitude},${longitude}&z=12"> ${latitude}, ${longitude}, ${
+              <div>Position: <a href="https://maps.google.com/maps?q=${latitude},${longitude}"> ${latitude}, ${longitude}, ${
               altitude > 0 || altitude < 9000 ? altitude : 0
             }m</a></div>
 
