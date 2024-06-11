@@ -60,7 +60,7 @@ const timeAgo = (date) => {
 // const server = useServer()
 
 onMounted(async () => {
-  let geolocationmsk = [55.76, 37.64]; // moskovv center off world
+  let geolocationmsk = [32.036970, 76.708620]; // Bir center of the Indian paragliding world
   let map;
 
   const renderSelfBallon = () => {
