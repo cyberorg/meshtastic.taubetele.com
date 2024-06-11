@@ -10,55 +10,39 @@
     <div v-if="!devices">Loading...</div>
     <div v-else>
       <p>
-        Meshtastic – оперативно-тактический радиочат без сотовой связи и
-        интернета. Этот проект, который позволяет использовать недорогие
-        радиомодемы стандарта LoRa в качестве автономного коммуникатора дальнего
-        действия для районов, где нет надежной сотовой связи. Эти радиомодемы
-        могут быть использованы, например, для пеших прогулок, катания на лыжах,
-        парапланеризма — практически любого хобби, в местности, где нет хорошей
-        связи. Каждый абонент может отправлять и просматривать текстовые
-        сообщения, включать дополнительные функции определения местоположения на
-        основе GPS.
+        Meshtastic – operational-tactical radio chat without cellular communication and the internet. This project allows the use of inexpensive LoRa standard radio modems as autonomous long-range communicators for areas without reliable cellular coverage. These radio modems can be used, for example, for hiking, skiing, paragliding—practically any hobby in areas without good connectivity. Each user can send and view text messages and enable additional GPS-based location determination features. See <a href=https://bircom.in>https://bircom.in</a> for more information.
       </p>
       <br />
       <p>
-        Данная карта отображает публичные устройства, входяцие в данную
-        радиосеть. Для того чтобы они появились тут вы можете включить MQTT на
-        своей ноде или добраться до ближайшей сети, в которой есть уже
-        подключенные участники.
+        This map displays public devices that are part of this radio network. To have your device appear here, you can enable MQTT on your node or connect to the nearest network with already connected participants.
       </p>
       <br />
       <table aligne="center" width="100%">
         <tr>
-          <th colspan="2">Условные обозначения</th>
+          <th colspan="2">Legends:</th>
         </tr>
         <tr>
           <td><img src=/blue.png></td>
-          <td>нода в сети, последнее сообщение пришло менее часа назад</td>
+          <td>Node in the network, last message received less than an hour ago</td>
         </tr>
         <tr>
           <td><img src=/green.png></td>
           <td>
-            нода в сети и подключена к MQTT, последнее сообщение пришло менее
-            часа назад
+            Node in the network and connected to MQTT, last message received less than an hour ago
           </td>
         </tr>
         <tr>
           <td><img src=/gray.png></td>
-          <td>нода не в сети, последнее сообщение пришло более часа назад</td>
+          <td>Node not in the network, last message received more than an hour ago</td>
         </tr>
       </table>
       <br />
       <p>
-        Каждая нода может слать следующие типы сообщений: NodeInfo, Device
-        Metrics, Environment Metrics (данные датчиков), Position, Message, Ping.
-        Все сообщения приходят в разное время, а могут вообще не приходить,
-        поэтому них есть время последнего сообщения, HopLimit, rssi/snr итд.
+        Each node can send the following types of messages: NodeInfo, Device Metrics, Environment Metrics (sensor data), Position, Message, Ping. All messages arrive at different times, or may not arrive at all, hence the last message time, HopLimit, rssi/snr, etc.
       </p>
       <br />
       <p>
-        Сервис пытается собирать данные и рисовать по ним графики. Сейчас
-        собирается только 1000 последних сообщений.
+        The service tries to collect data and plot graphs based on it. Currently, only the last 1000 messages are collected. Based on <a href=https://meshtastic.taubetele.com>https://meshtastic.taubetele.com</a>
       </p>
     </div>
     <template v-slot:footer> This is a new modal footer. ?</template>
