@@ -87,9 +87,12 @@ onMounted(async () => {
     const placemarks = [];
 
     var state = map.action.getCurrentState();
+    const nowTime = Math.round(Date.now() / 1000);
 
     for (const index in devices) {
       const device = devices[index];
+      // Skip if the device timestamp is older than 24 hours
+      if (nowTime - device.timestamp > 24 * 3600) continue;
       const nodeId =
         device?.user?.from ||
         device?.position?.from ||
