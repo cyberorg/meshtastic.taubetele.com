@@ -709,8 +709,8 @@ onMounted(async () => {
 
   setTimeout(async function run() {
     await fetchDevices();
-    setTimeout(run, 3000);
-  }, 3000);
+    setTimeout(run, 120000);
+  }, 120000);
 });
 
 const handleChartOpen = (nodeId) => {
