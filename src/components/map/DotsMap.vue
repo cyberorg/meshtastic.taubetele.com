@@ -406,11 +406,17 @@ onMounted(async () => {
 
     renderBallons(devices?.value);
 
-    watch(devices, (newDevices) => {
-      // следит за обновлениями данных
-      map.geoObjects?.removeAll();
-      renderBallons(newDevices);
-    });
+    let lastUpdateTime = 0;
+
+    watch(devices, debounce((newDevices) => {
+    const currentTime = Date.now();
+    // Check if it's been at least 2 minutes since the last update
+    if (currentTime - lastUpdateTime >= 2 * 60 * 1000) {
+    // Update the last update time
+        lastUpdateTime = currentTime;
+        map.geoObjects?.removeAll();
+	renderBallons(newDevices);
+    }}, 2000));
 
     watch(center, (newValue) => {
       const zoom = 16;
