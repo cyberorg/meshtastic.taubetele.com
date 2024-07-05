@@ -10,9 +10,11 @@ import './assets/main.scss'
 const htmlLang = document.documentElement.lang;
 
 // Set the timezone globally for Highcharts
+const browserTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
 Highcharts.setOptions({
   global: {
-    timezone: 'Asia/Kolkata' // Set your desired timezone here
+    timezone: browserTimezone // Set your desired timezone here
   }
 });
 
