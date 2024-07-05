@@ -97,7 +97,7 @@ const chartSeries = computed(() => {
   });
 });
 
-const fetcData = async () => {
+const fetchData = async () => {
   try {
     const [responseDeviceMetrics, responseEnvironmentMetrics] =
       await Promise.all([
@@ -121,7 +121,7 @@ const fetcData = async () => {
 };
 
 onMounted(() => {
-  fetcData();
+  fetchData();
 });
 </script>
 <style lang="scss">

@@ -1,5 +1,6 @@
 import { createApp } from 'vue';
 import HighchartsVue from 'highcharts-vue';
+import Highcharts from 'highcharts';
 import FontAwesomeIcon from "./utils/fontawesome";
 import App from './App.vue'
 
@@ -7,6 +8,15 @@ import './assets/main.scss'
 
 // Fetch the lang attribute from the HTML <html> tag
 const htmlLang = document.documentElement.lang;
+
+// Set the timezone globally for Highcharts
+const browserTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+Highcharts.setOptions({
+  global: {
+    timezone: browserTimezone // Set your desired timezone here
+  }
+});
 
 // Function to dynamically load the Yandex Maps API script
 function loadYandexMapsScript() {
